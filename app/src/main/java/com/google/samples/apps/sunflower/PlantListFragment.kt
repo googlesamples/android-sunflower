@@ -45,6 +45,7 @@ class PlantListFragment : Fragment() {
 
         val factory = InjectorUtils.providePlantListViewModelFactory(context)
         viewModel = ViewModelProviders.of(this, factory).get(PlantListViewModel::class.java)
+        binding.viewModel = viewModel
 
         val adapter = PlantAdapter()
         binding.plantList.adapter = adapter

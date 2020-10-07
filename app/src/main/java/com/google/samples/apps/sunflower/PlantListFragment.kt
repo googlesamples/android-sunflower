@@ -17,17 +17,14 @@
 package com.google.samples.apps.sunflower
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
-import com.google.samples.apps.sunflower.adapters.PlantAdapter
-import com.google.samples.apps.sunflower.databinding.FragmentPlantListBinding
+import androidx.navigation.fragment.findNavController
+import com.google.android.material.composethemeadapter.MdcTheme
+import com.google.samples.apps.sunflower.compose.ProvideDisplayInsets
+import com.google.samples.apps.sunflower.compose.plantlist.PlantListScreen
 import com.google.samples.apps.sunflower.utilities.InjectorUtils
 import com.google.samples.apps.sunflower.viewmodels.PlantListViewModel
 
@@ -37,20 +34,26 @@ class PlantListFragment : Fragment() {
         InjectorUtils.providePlantListViewModelFactory(this)
     }
 
+    // We still have menu items in this fragment need to be placed on topAppbar
+    // So, We can't migrate completely to ComposeView, maybe it'll be possible when we migrate HomeViewPagerFragment
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentPlantListBinding.inflate(inflater, container, false)
-        context ?: return binding.root
-
-        val adapter = PlantAdapter()
-        binding.plantList.adapter = adapter
-        subscribeUi(adapter)
-
         setHasOptionsMenu(true)
-        return binding.root
+        return ComposeView(requireContext()).apply {
+            setContent {
+                MdcTheme {
+                    ProvideDisplayInsets {
+                        PlantListScreen(viewModel = viewModel, onClick = { plantId ->
+                            val direction = HomeViewPagerFragmentDirections.actionViewPagerFragmentToPlantDetailFragment(plantId)
+                            this@PlantListFragment.findNavController().navigate(direction)
+                        })
+                    }
+                }
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -64,12 +67,6 @@ class PlantListFragment : Fragment() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    private fun subscribeUi(adapter: PlantAdapter) {
-        viewModel.plants.observe(viewLifecycleOwner) { plants ->
-            adapter.submitList(plants)
         }
     }
 

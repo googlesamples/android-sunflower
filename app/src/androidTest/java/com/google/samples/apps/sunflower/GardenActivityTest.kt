@@ -36,7 +36,7 @@ class GardenActivityTest {
         // When the "Add Plant" button is clicked
         onView(withId(R.id.add_plant)).perform(click())
 
-        // Then the ViewPager should change to the Plant List page
-        onView(withId(R.id.plant_list)).check(matches(isDisplayed()))
+        // plant_list xml file is Removed, assert filterIcon is displayed instead
+        onView(withId(R.id.filter_zone)).check(matches(isDisplayed()))
     }
 }

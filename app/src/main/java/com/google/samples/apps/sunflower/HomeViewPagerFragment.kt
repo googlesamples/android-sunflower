@@ -41,7 +41,7 @@ class HomeViewPagerFragment : Fragment() {
         val tabLayout = binding.tabs
         val viewPager = binding.viewPager
 
-        viewPager.adapter = SunflowerPagerAdapter(this)
+        viewPager.adapter = SunflowerPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle)
 
         // Set the icon and text for each tab
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
@@ -68,5 +68,10 @@ class HomeViewPagerFragment : Fragment() {
             PLANT_LIST_PAGE_INDEX -> getString(R.string.plant_list_title)
             else -> null
         }
+    }
+
+    override fun onDestroyView() {
+        (activity as AppCompatActivity).setSupportActionBar(null)
+        super.onDestroyView()
     }
 }

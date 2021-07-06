@@ -26,6 +26,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.google.samples.apps.sunflower.adapters.PlantAdapter
 import com.google.samples.apps.sunflower.databinding.FragmentPlantListBinding
 import com.google.samples.apps.sunflower.viewmodels.PlantListViewModel
@@ -45,6 +47,12 @@ class PlantListFragment : Fragment() {
         context ?: return binding.root
 
         val adapter = PlantAdapter()
+        adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                val layout = (binding.plantList.layoutManager as StaggeredGridLayoutManager)
+                layout.scrollToPositionWithOffset(positionStart, 0)
+            }
+        })
         binding.plantList.adapter = adapter
         subscribeUi(adapter)
 
